@@ -1,62 +1,149 @@
-# Beads Configuration File
-# This file configures default behavior for all bd commands in this repository
-# All settings can also be set via environment variables (BD_* prefix)
-# or overridden with command-line flags
+# Beads Full Configuration for Site360
+# ==================================
+#
+# Complete configuration with all features enabled.
+# Recommended for production projects.
+#
+# Documentation: https://github.com/steveyegge/beads
+# Methodology by: Steve Yegge (https://github.com/steveyegge)
 
-# Issue prefix for this repository (used by bd init)
-# If not set, bd init will auto-detect from directory name
-# Example: issue-prefix: "myproject" creates issues like "myproject-1", "myproject-2", etc.
-# issue-prefix: ""
+# =============================================================================
+# CORE SETTINGS (REQUIRED - customize these)
+# =============================================================================
 
-# Use no-db mode: load from JSONL, no SQLite, write back after each command
-# When true, bd will use .beads/issues.jsonl as the source of truth
-# instead of SQLite database
-# no-db: false
+# Issue prefix - all issues will be PREFIX-xxx
+issue-prefix: "site"
 
-# Disable daemon for RPC communication (forces direct database access)
-# no-daemon: false
+# Auto-start daemon when running bd commands
+auto-start-daemon: true
 
-# Disable auto-flush of database to JSONL after mutations
-# no-auto-flush: false
+# Debounce interval for auto-flush (how often to sync to JSONL)
+flush-debounce: "5s"
 
-# Disable auto-import from JSONL when it's newer than database
-# no-auto-import: false
+# =============================================================================
+# DAEMON SETTINGS (Auto-Sync)
+# =============================================================================
 
-# Enable JSON output by default
-# json: false
+daemon.auto-commit: true
+daemon.auto-push: true
+daemon.auto-pull: true
 
-# Default actor for audit trails (overridden by BD_ACTOR or --actor)
-# actor: ""
+# =============================================================================
+# DIRECTORY LABELS (Auto-categorization)
+# =============================================================================
+# Automatically assign labels based on file paths when creating issues
+# Usage: bd create "Fix X" --files apps/web/components/Button.tsx
+#        → automatically gets labels: web, frontend, components
+#
+# Customized for Site360 project structure
 
-# Path to database (overridden by BEADS_DB or --db)
-# db: ""
+directory-labels:
+  "apps/web": ["web", "frontend"]
+  "apps/web/app": ["web", "frontend", "pages"]
+  "apps/web/components": ["web", "frontend", "components"]
+  "apps/web/lib": ["web", "utils"]
+  "apps/mobile": ["mobile"]
+  "apps/mobile/src": ["mobile", "source"]
+  "apps/mobile/android": ["mobile", "android"]
+  "apps/mobile/ios": ["mobile", "ios"]
+  "packages/database": ["database", "supabase"]
+  "packages/ui": ["ui", "components"]
+  "packages/api": ["api", "backend"]
+  "workers": ["backend", "api", "cloudflare"]
+  "docs": ["documentation"]
+  ".claude": ["agent", "config"]
+  ".claude/agents": ["agent"]
+  ".claude/commands": ["agent", "commands"]
+  ".claude/skills": ["agent", "skills"]
 
-# Auto-start daemon if not running (can also use BEADS_AUTO_START_DAEMON)
-# auto-start-daemon: true
+# =============================================================================
+# EXCLUSIVE LOCK PROTOCOL (Multi-session safety)
+# =============================================================================
 
-# Debounce interval for auto-flush (can also use BEADS_FLUSH_DEBOUNCE)
-# flush-debounce: "5s"
+exclusive-lock:
+  enabled: true
+  timeout: "30m"
+  lock-file: ".beads/locks.json"
+  on-conflict: "warn"
 
-# Git branch for beads commits (bd sync will commit to this branch)
-# IMPORTANT: Set this for team projects so all clones use the same sync branch.
-# This setting persists across clones (unlike database config which is gitignored).
-# Can also use BEADS_SYNC_BRANCH env var for local override.
-# If not set, bd sync will require you to run 'bd config set sync.branch <branch>'.
-# sync-branch: "beads-sync"
+# =============================================================================
+# PROTECTED BRANCH MODE (Safe deployment)
+# =============================================================================
+# Prevents accidental pushes to production branch
 
-# Multi-repo configuration (experimental - bd-307)
-# Allows hydrating from multiple repositories and routing writes to the correct JSONL
-# repos:
-#   primary: "."  # Primary repo (where this database lives)
-#   additional:   # Additional repos to hydrate from (read-only)
-#     - ~/beads-planning  # Personal planning repo
-#     - ~/work-planning   # Work planning repo
+protected-branches:
+  enabled: true
+  production: "master"
+  development: "develop"
 
-# Integration settings (access with 'bd config get/set')
-# These are stored in the database, not in this file:
-# - jira.url
-# - jira.project
-# - linear.url
-# - linear.api-key
-# - github.org
-# - github.repo
+# =============================================================================
+# PATROL PATTERN (Recurring workflows)
+# =============================================================================
+# Run with: bd patrol run <name>
+
+patrols:
+  code-review:
+    description: "Code review after major implementation"
+    formula: "codereview"
+    trigger: "on_demand"
+    default-vars:
+      fix_mode: "ask"
+
+  health-check:
+    description: "Codebase health check"
+    formula: "healthcheck"
+    trigger: "on_demand"
+
+# =============================================================================
+# MOLECULE BONDING (Complex feature pipelines)
+# =============================================================================
+# Bond multiple molecules into a pipeline for large features
+
+molecule-bonds:
+  bigfeature-pipeline:
+    description: "Full feature lifecycle with bonded stages"
+    stages:
+      - id: "spec"
+        formula: "exploration"
+        output: "spec.md"
+      - id: "design"
+        formula: "exploration"
+        depends_on: ["spec"]
+        output: "plan.md"
+      - id: "implement"
+        formula: "bigfeature"
+        depends_on: ["design"]
+      - id: "review"
+        formula: "codereview"
+        depends_on: ["implement"]
+      - id: "release"
+        formula: "release"
+        depends_on: ["review"]
+    auto_advance: false
+
+# =============================================================================
+# SITE360 WORKFLOW NOTES
+# =============================================================================
+#
+# Core workflow for AI agents:
+#   1. bd ready                  - Find available work
+#   2. bd update ID --status in_progress - Claim task (acquires lock)
+#   3. Do the work
+#   4. bd close ID --reason "..." - Complete task (releases lock)
+#   5. Daemon auto-syncs (or bd sync manually)
+#
+# Multi-terminal work:
+#   - Each terminal should work on DIFFERENT issues
+#   - Lock prevents two terminals from editing same issue
+#   - If locked: bd list --unlocked to find available work
+#
+# Creating new work:
+#   bd create "Title" -t feature|bug|chore -p 0-4
+#
+# Emergent work (discovered during other task):
+#   bd create "Found issue" -t bug --deps discovered-from:SITE-current
+#
+# SESSION CLOSE PROTOCOL (MANDATORY):
+#   git status → git add → bd sync → git commit → bd sync → git push
+#   Work is NOT done until pushed!
+#

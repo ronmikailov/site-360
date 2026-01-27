@@ -24,3 +24,49 @@ Thumbs.db
 
 # Clone of orchestrator kit (not needed after setup)
 claude-code-orchestrator-kit/
+
+# Build outputs
+dist/
+build/
+out/
+.next/
+.turbo/
+
+# Testing
+coverage/
+.nyc_output/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Temporary files
+*.tmp
+.cache/
+.temp/
+
+# Monorepo
+.pnp
+.pnp.js
+.pnpm-store/
+.npmrc
+
+# Mobile specific
+apps/mobile/android/build/
+apps/mobile/android/.gradle/
+apps/mobile/ios/Pods/
+apps/mobile/ios/build/
+apps/mobile/*.xcworkspace
+apps/mobile/*.xcodeproj
+
+# Workers
+workers/**/dist/
+workers/**/.wrangler/
+
+# Deployment
+.vercel/
+.cloudflare/

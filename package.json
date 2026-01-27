@@ -1,0 +1,31 @@
+
+{
+  "name": "site360",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Construction Site Management Platform",
+  "author": "Site360 Team",
+  "license": "MIT",
+  "scripts": {
+    "dev": "pnpm --filter \"./apps/**\" dev",
+    "dev:web": "pnpm --filter web dev",
+    "dev:mobile": "pnpm --filter mobile dev",
+    "build": "pnpm --filter \"./apps/**\" --filter \"./packages/**\" build",
+    "build:web": "pnpm --filter web build",
+    "build:workers": "pnpm --filter \"./workers/**\" build",
+    "type-check": "pnpm --filter \"./apps/**\" --filter \"./packages/**\" type-check",
+    "lint": "pnpm --filter \"./apps/**\" --filter \"./packages/**\" lint",
+    "test": "pnpm --filter \"./apps/**\" --filter \"./packages/**\" test",
+    "clean": "pnpm --filter \"./apps/**\" --filter \"./packages/**\" clean && rm -rf node_modules"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "workers/*"
+  ],
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.15.0"
+}

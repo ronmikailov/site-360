@@ -1,0 +1,23 @@
+{
+  "name": "mobile",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Site360 Mobile App - React Native",
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint .",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf node_modules android/build ios/build"
+  },
+  "dependencies": {
+    "react": "^18.3.0",
+    "react-native": "^0.73.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.0",
+    "typescript": "^5.3.0"
+  }
+}

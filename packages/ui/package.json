@@ -1,0 +1,20 @@
+{
+  "name": "@site360/ui",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Shared UI components for Site360",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist node_modules"
+  },
+  "peerDependencies": {
+    "react": "^18.3.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.0",
+    "typescript": "^5.3.0"
+  }
+}
