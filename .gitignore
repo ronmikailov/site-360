@@ -1,0 +1,26 @@
+# Environment files
+.env.local
+.env*.local
+
+# MCP config with credentials
+.mcp.json
+
+# Dependencies
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Beads local files
+.beads/beads.db
+.beads/*.db-*
+
+# Clone of orchestrator kit (not needed after setup)
+claude-code-orchestrator-kit/
